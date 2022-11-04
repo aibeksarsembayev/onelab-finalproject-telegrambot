@@ -63,7 +63,6 @@ func (c *Client) SendMessage(chatID int, text string) error {
 	_, err := c.doRequest(SendMessageMethod, q)
 	if err != nil {
 		return e.Wrap("can't send message", err)
-
 	}
 	return nil
 
