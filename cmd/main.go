@@ -12,27 +12,40 @@ import (
 	"flag"
 	"log"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
+	tgClient "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
+	event_consumer "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/consumer/event-consumer"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e/storage/files"
 )
 
 const (
-	tgBotHost = "api.telegram.org" // TODO: make as extenral func
+	tgBotHost   = "api.telegram.org" // TODO: make as extenral func
+	storagePath = "files_storage"          // TODO: make as config
+	batchSize   = 100
 )
 
+// 5752821600:AAGdRemKSAp2Kf3TAmFCmBWaF2mAls_eIy8
+
 func main() {
-	tgClient := telegram.New(tgBotHost, mustToken())
 
-	// fetcher = fetcher.New(tgClient)
+	eventsProcessor := telegram.New(
+		tgClient.New(tgBotHost, mustToken()),
+		files.New(storagePath),
+	)
 
-	// processor = processor.New(tgClient)
+	log.Println("service started")
 
-	// consumer.Start(fetcher, processor)
+	consumer := event_consumer.New(eventsProcessor, eventsProcessor, batchSize)
 
+	if err := consumer.Start(); err != nil {
+		log.Fatal("service is stopped", err)
+
+	}
 }
 
 func mustToken() string {
 	token := flag.String(
-		"token-bot-token",
+		"tg-bot-token",
 		"",
 		"token for access to telegram bot",
 	)

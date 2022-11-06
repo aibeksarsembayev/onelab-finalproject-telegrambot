@@ -101,7 +101,10 @@ func event(upd telegram.Update) events.Event {
 }
 
 func fetchType(upd telegram.Update) events.Type {
-
+	if upd.Message == nil {
+		return events.Unknown
+	}
+	return events.Message
 }
 
 func fetchText(upd telegram.Update) string {
