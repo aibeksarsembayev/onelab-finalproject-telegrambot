@@ -64,13 +64,13 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 	}
 
 	if len(files) == 0 {
-		return nil, ErrNoSavedPages
+		return nil, storage.ErrNoSavedPages
 	}
 
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Intn(len(files))
 
-	file := file[n]
+	file := files[n]
 
 }
 
