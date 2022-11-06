@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events"
+	"read-adviser-bot/events"
 )
 
 type Consumer struct {
@@ -23,9 +23,9 @@ func New(fetcher events.Fetcher, processor events.Processor, batchSize int) Cons
 
 func (c Consumer) Start() error {
 	for {
-		gotEvents, err := c.fetcher.Fetch(c.batchSize) //TODO: include retry into fetcher with exponential delay time
+		gotEvents, err := c.fetcher.Fetch(c.batchSize)
 		if err != nil {
-			log.Printf("[ERR] consumer: %s", err.Error()) // TODO: change error handling
+			log.Printf("[ERR] consumer: %s", err.Error())
 
 			continue
 		}
@@ -44,20 +44,16 @@ func (c Consumer) Start() error {
 	}
 }
 
-// 1. Loss of events: retryu, return storage, fallback, confirmation
-// 2. Process of whole batch: stop at 1st error, counter of errors
-// 3. Parallel process: waitgroup
-
 func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
-		log.Printf("got new event:%s", event.Text)
+		log.Printf("got new event: %s", event.Text)
 
 		if err := c.processor.Process(event); err != nil {
 			log.Printf("can't handle event: %s", err.Error())
 
 			continue
 		}
-
 	}
+
 	return nil
 }

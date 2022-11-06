@@ -3,10 +3,10 @@ package telegram
 import (
 	"errors"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events"
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e/storage"
+	"read-adviser-bot/clients/telegram"
+	"read-adviser-bot/events"
+	"read-adviser-bot/lib/e"
+	"read-adviser-bot/storage"
 )
 
 type Processor struct {
@@ -20,8 +20,10 @@ type Meta struct {
 	Username string
 }
 
-var ErrUnknownEventType = errors.New("unknown event type")
-var ErrUnknownMetaType = errors.New("unknown meta type")
+var (
+	ErrUnknownEventType = errors.New("unknown event type")
+	ErrUnknownMetaType  = errors.New("unknown meta type")
+)
 
 func New(client *telegram.Client, storage storage.Storage) *Processor {
 	return &Processor{
@@ -37,7 +39,7 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	}
 
 	if len(updates) == 0 {
-		return nil, nil // return intrnal error custom
+		return nil, nil
 	}
 
 	res := make([]events.Event, 0, len(updates))
@@ -76,8 +78,9 @@ func (p *Processor) processMessage(event events.Event) error {
 func meta(event events.Event) (Meta, error) {
 	res, ok := event.Meta.(Meta)
 	if !ok {
-		return Meta{}, e.Wrap("can't get get meta", ErrUnknownMetaType)
+		return Meta{}, e.Wrap("can't get meta", ErrUnknownMetaType)
 	}
+
 	return res, nil
 }
 
@@ -89,7 +92,6 @@ func event(upd telegram.Update) events.Event {
 		Text: fetchText(upd),
 	}
 
-	// chatID usermame
 	if updType == events.Message {
 		res.Meta = Meta{
 			ChatID:   upd.Message.Chat.ID,
@@ -100,16 +102,18 @@ func event(upd telegram.Update) events.Event {
 	return res
 }
 
-func fetchType(upd telegram.Update) events.Type {
-	if upd.Message == nil {
-		return events.Unknown
-	}
-	return events.Message
-}
-
 func fetchText(upd telegram.Update) string {
 	if upd.Message == nil {
 		return ""
 	}
+
 	return upd.Message.Text
+}
+
+func fetchType(upd telegram.Update) events.Type {
+	if upd.Message == nil {
+		return events.Unknown
+	}
+
+	return events.Message
 }

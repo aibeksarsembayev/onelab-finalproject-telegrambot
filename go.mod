@@ -1,5 +1,5 @@
-module github.com/aibeksarsembayev/onelab-finalproject-telegrambot
+module read-adviser-bot
 
-go 1.18
+go 1.17
 
-require github.com/subosito/gotenv v1.4.1
+require github.com/mattn/go-sqlite3 v1.14.14

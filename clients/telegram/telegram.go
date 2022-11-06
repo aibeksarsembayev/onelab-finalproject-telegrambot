@@ -8,7 +8,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
+	"read-adviser-bot/lib/e"
 )
 
 type Client struct {
@@ -19,7 +19,7 @@ type Client struct {
 
 const (
 	getUpdatesMethod  = "getUpdates"
-	SendMessageMethod = "sendMessage"
+	sendMessageMethod = "sendMessage"
 )
 
 func New(host string, token string) *Client {
@@ -28,7 +28,6 @@ func New(host string, token string) *Client {
 		basePath: newBasePath(token),
 		client:   http.Client{},
 	}
-
 }
 
 func newBasePath(token string) string {
@@ -36,7 +35,7 @@ func newBasePath(token string) string {
 }
 
 func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
-	defer func() { err = e.WrapIfErr("can't do request", err) }()
+	defer func() { err = e.WrapIfErr("can't get updates", err) }()
 
 	q := url.Values{}
 	q.Add("offset", strconv.Itoa(offset))
@@ -47,7 +46,7 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 		return nil, err
 	}
 
-	var res UpdatesResponce
+	var res UpdatesResponse
 
 	if err := json.Unmarshal(data, &res); err != nil {
 		return nil, err
@@ -55,22 +54,22 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 
 	return res.Result, nil
 }
+
 func (c *Client) SendMessage(chatID int, text string) error {
 	q := url.Values{}
 	q.Add("chat_id", strconv.Itoa(chatID))
 	q.Add("text", text)
 
-	_, err := c.doRequest(SendMessageMethod, q)
+	_, err := c.doRequest(sendMessageMethod, q)
 	if err != nil {
 		return e.Wrap("can't send message", err)
 	}
-	return nil
 
+	return nil
 }
 
 func (c *Client) doRequest(method string, query url.Values) (data []byte, err error) {
 	defer func() { err = e.WrapIfErr("can't do request", err) }()
-	// const errMsg = "can't do request"
 
 	u := url.URL{
 		Scheme: "https",
@@ -92,9 +91,9 @@ func (c *Client) doRequest(method string, query url.Values) (data []byte, err er
 	defer func() { _ = resp.Body.Close() }()
 
 	body, err := io.ReadAll(resp.Body)
-
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }
