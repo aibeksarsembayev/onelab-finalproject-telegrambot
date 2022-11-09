@@ -7,8 +7,8 @@
     "timeout":2
   },
   "database": {
-    "host": "postgresdb",
-    "port": ":5432",
+    "host": "localhost",
+    "port": ":6543",
     "user": "postgres",
     "pass": "postgres",
     "name": "postgresdb"

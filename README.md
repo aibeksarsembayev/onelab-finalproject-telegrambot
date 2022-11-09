@@ -1,10 +1,3 @@
-# Read Adviser Bot
+# Telegram Bot - OneLab - Final Project
 
-Данный бот умеет сохранять ссылки, которые ему скидывают собеседники, и по запросу отправлять
-случайную ссылку из сохраненных.
-
-Это полезно для тех людей, которые часто сохраняют много статей, но забывают их читать :)
-
-Код написан таким образом, чтобы его легко было расширять. К примеру, к нему без труда можно
-добавить реализацию для любого другого мессенджера, добавив соотствующий клиент. Остальная логика
-останется без изменений.
+## Telegram Bot parses web-site(https://sber-invest.kz/knowledgebase) and shows all articles from resourses. Articles can be requested by Author, Category or All. Additionally, filtered data can be exported in various format (csv, excel, pdf, etc.)

@@ -16,11 +16,11 @@ func InitPostgresDBConn(config *config.Config) (*sqlx.DB, error) {
 	// postgres://jack:secret@pg.example.com:5432/mydb?sslmode=verify-ca&pool_max_conns=10
 
 	// Current URL
-	// postgres://postgres:postgres@postgres:5432/postgresdb
+	// postgres://postgres:postgres@postgresdb:5432/postgresdb
 
 	url := fmt.Sprintf("postgres://%s:%s@%s%s/%s", config.Database.DBUser, config.Database.DBPass, config.Database.DBHost, config.Database.DBPort, config.Database.DBName)
 	// dsn := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", config.Database.DBUser, config.Database.DBPass, config.Database.DBHost, config.Database.DBPort, config.Database.DBName)
-
+	fmt.Println(url)
 	db, err := sqlx.Connect("pgx", url)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: %w", err)
