@@ -6,9 +6,10 @@ import (
 	"log"
 
 	tgClient "read-adviser-bot/clients/telegram"
-	"read-adviser-bot/consumer/event-consumer"
+	event_consumer "read-adviser-bot/consumer/event-consumer"
 	"read-adviser-bot/events/telegram"
 	"read-adviser-bot/storage/sqlite"
+	"read-adviser-bot/tools/parser"
 )
 
 const (
@@ -18,6 +19,8 @@ const (
 )
 
 func main() {
+	// call parser
+	parser.NewParser()
 	//s := files.New(storagePath)
 	s, err := sqlite.New(sqliteStoragePath)
 	if err != nil {
@@ -40,6 +43,7 @@ func main() {
 	if err := consumer.Start(); err != nil {
 		log.Fatal("service is stopped", err)
 	}
+
 }
 
 func mustToken() string {
