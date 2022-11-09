@@ -10,9 +10,10 @@ import (
 )
 
 type Processor struct {
-	tg      *telegram.Client
-	offset  int
-	storage storage.Storage
+	tg       *telegram.Client
+	offset   int
+	storage  storage.Storage
+	storage2 storage.AStorage
 }
 
 type Meta struct {
@@ -25,10 +26,11 @@ var (
 	ErrUnknownMetaType  = errors.New("unknown meta type")
 )
 
-func New(client *telegram.Client, storage storage.Storage) *Processor {
+func New(client *telegram.Client, storage storage.Storage, storage2 storage.AStorage) *Processor {
 	return &Processor{
-		tg:      client,
-		storage: storage,
+		tg:       client,
+		storage:  storage,
+		storage2: storage2,
 	}
 }
 
