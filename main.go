@@ -5,11 +5,11 @@ import (
 	"flag"
 	"log"
 
-	tgClient "read-adviser-bot/clients/telegram"
-	event_consumer "read-adviser-bot/consumer/event-consumer"
-	"read-adviser-bot/events/telegram"
-	"read-adviser-bot/storage/sqlite"
-	"read-adviser-bot/tools/parser"
+	tgClient "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
+	event_consumer "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/consumer/event-consumer"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/sqlite"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/tools/parser"
 )
 
 const (

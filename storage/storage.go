@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 
-	"read-adviser-bot/lib/e"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
 )
 
 type Storage interface {

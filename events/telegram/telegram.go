@@ -3,10 +3,10 @@ package telegram
 import (
 	"errors"
 
-	"read-adviser-bot/clients/telegram"
-	"read-adviser-bot/events"
-	"read-adviser-bot/lib/e"
-	"read-adviser-bot/storage"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 )
 
 type Processor struct {

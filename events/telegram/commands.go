@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"strings"
 
-	"read-adviser-bot/lib/e"
-	"read-adviser-bot/storage"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 )
 
 const (

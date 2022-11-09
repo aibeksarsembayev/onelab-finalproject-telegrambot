@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"read-adviser-bot/events"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events"
 )
 
 type Consumer struct {

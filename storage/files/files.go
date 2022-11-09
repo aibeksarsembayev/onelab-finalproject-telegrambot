@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"read-adviser-bot/lib/e"
-	"read-adviser-bot/storage"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 )
 
 type Storage struct {

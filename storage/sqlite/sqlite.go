@@ -7,7 +7,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"read-adviser-bot/storage"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 )
 
 type Storage struct {

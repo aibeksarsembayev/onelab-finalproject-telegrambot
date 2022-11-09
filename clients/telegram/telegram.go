@@ -8,7 +8,7 @@ import (
 	"path"
 	"strconv"
 
-	"read-adviser-bot/lib/e"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
 )
 
 type Client struct {
