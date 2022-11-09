@@ -53,14 +53,12 @@ func parseByCat(catN int) []*Article {
 
 		a.Title = e.ChildText("#article-title")
 		a.Author = e.ChildText("#article-author-name")
-		createdStr := e.ChildText("#article-create-date")
-		createdStr = strings.TrimPrefix(createdStr, "Добавлен: ")
 
-		createdTime, err := time.Parse("01-Oct-2022 08:15", createdStr)
-		if err != nil {
-			log.Fatal("time parse issue", err)
-		}
-		a.CreatedAt = createdTime
+		timeStr := e.ChildText("#article-create-date")
+
+		timeStr = strings.TrimPrefix(timeStr, "Добавлен: ")
+		a.CreatedAt = parseTime(timeStr)
+
 		a.Category = cat
 		a.URL = "https://sber-invest.kz" + e.ChildAttr("a#article-title", "href")
 
@@ -74,4 +72,24 @@ func parseByCat(catN int) []*Article {
 	c.Visit(url)
 
 	return ax
+}
+
+func parseTime(timeStr string) time.Time {
+	if timeStr == "" {
+		return time.Time{}
+	}
+	timeStr = strings.TrimPrefix(timeStr, "Добавлен: ")
+
+	yy := timeStr[7:9]
+	mm := timeStr[3:6]
+	dd := timeStr[:2]
+	tt := timeStr[10:]
+
+	timeFormatted := fmt.Sprintf("20%s-%s-%sT%s", yy, mm, dd, tt)
+	timeCreated, err := time.Parse("2006-Jan-02T15:04", timeFormatted)
+	if err != nil {
+		log.Fatal("time parse issue", err)
+	}
+
+	return timeCreated
 }
