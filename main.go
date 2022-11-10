@@ -12,7 +12,6 @@ import (
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/postgres"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/sqlite"
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/tools/parser"
 )
 
 const (
@@ -23,7 +22,8 @@ const (
 
 func main() {
 	// call parser
-	parser.NewParser()
+	// parser.NewParser()
+
 	// load configs
 	conf, err := config.LoadConfig()
 	if err != nil {
@@ -52,7 +52,7 @@ func main() {
 	defer dbpool.Close()
 
 	s2 := postgres.NewDBArticleRepo(dbpool)
-
+	s2.InsertArticle()
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),
 		s,

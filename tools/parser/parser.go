@@ -3,36 +3,30 @@ package parser
 import (
 	"fmt"
 	"log"
+	"path"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 	"github.com/gocolly/colly"
 )
 
-type Article struct {
-	Title string
-	// Content   string
-	Author    string
-	Category  string
-	URL       string
-	CreatedAt time.Time
-}
-
-func NewParser() {
-	ax := []*Article{}
+func NewParser() []*storage.Article {
+	ax := []*storage.Article{}
 
 	for i := 1; i < 8; i++ {
 		tempax := parseByCat(i)
 		ax = append(ax, tempax...)
 	}
 
-	for i, a := range ax {
-		fmt.Printf("========== #%d ==========\n%s\n", i, a)
+	for _, a := range ax {
+		fmt.Println(a)
 	}
-
+	return ax
 }
 
-func parseByCat(catN int) []*Article {
+func parseByCat(catN int) []*storage.Article {
 	c := colly.NewCollector(
 		colly.AllowedDomains("sber-invest.kz"),
 	)
@@ -40,7 +34,7 @@ func parseByCat(catN int) []*Article {
 		fmt.Println("Visiting", r.URL)
 	})
 
-	ax := []*Article{}
+	ax := []*storage.Article{}
 
 	cat := ""
 
@@ -49,18 +43,20 @@ func parseByCat(catN int) []*Article {
 	})
 
 	c.OnHTML("div.message", func(e *colly.HTMLElement) {
-		a := &Article{}
+		a := &storage.Article{}
 
 		a.Title = e.ChildText("#article-title")
 		a.Author = e.ChildText("#article-author-name")
 
 		timeStr := e.ChildText("#article-create-date")
 
-		timeStr = strings.TrimPrefix(timeStr, "Добавлен: ")
 		a.CreatedAt = parseTime(timeStr)
 
 		a.Category = cat
 		a.URL = "https://sber-invest.kz" + e.ChildAttr("a#article-title", "href")
+
+		articleIDstr := path.Base(a.URL)
+		a.ArticleID, _ = strconv.Atoi(articleIDstr)
 
 		if a.Author != "" {
 			ax = append(ax, a)
@@ -75,9 +71,11 @@ func parseByCat(catN int) []*Article {
 }
 
 func parseTime(timeStr string) time.Time {
+
 	if timeStr == "" {
 		return time.Time{}
 	}
+
 	timeStr = strings.TrimPrefix(timeStr, "Добавлен: ")
 
 	yy := timeStr[7:9]

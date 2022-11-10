@@ -1,6 +1,6 @@
 module github.com/aibeksarsembayev/onelab-finalproject-telegrambot
 
-go 1.19
+go 1.18
 
 require (
 	github.com/gocolly/colly v1.2.0
