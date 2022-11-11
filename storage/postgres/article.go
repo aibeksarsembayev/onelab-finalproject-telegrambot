@@ -32,9 +32,9 @@ func (s *ArticleRepository) InsertArticle() {
 func (s *ArticleRepository) Create(ctx context.Context, a []*storage.Article) error {
 
 	_, err := s.dbpool.NamedExec(`INSERT INTO "article" (title, article_id, author, category, url, created_at)
-	VALUES (:title, :author, :category, :url, :created_at) 
+	VALUES (:title, :article_id, :author, :category, :url, :created_at)
 	ON CONFLICT(article_id) 
-	DO UPDATE SET title=excluded.title, author=excluded.author,  category=excluded.category, url=excluded.url, created_at=excluded.created_at`, a)
+	DO UPDATE SET (title, author, category, url, created_at) = (excluded.title, excluded.author, excluded.category, excluded.url, excluded.created_at)`, a)
 
 	if err != nil {
 		return err
