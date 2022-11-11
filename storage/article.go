@@ -12,6 +12,7 @@ type AStorage interface {
 	GetAll(ctx context.Context) ([]*Article, error)
 }
 
+
 type Article struct {
 	ID        int       `db:"id"`
 	ArticleID int       `db:"article_id"`
