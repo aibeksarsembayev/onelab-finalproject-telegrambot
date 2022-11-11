@@ -52,7 +52,9 @@ func main() {
 	defer dbpool.Close()
 
 	s2 := postgres.NewDBArticleRepo(dbpool)
-	s2.InsertArticle()
+
+	// s2.InsertArticle()
+
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),
 		s,

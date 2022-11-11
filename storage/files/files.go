@@ -74,7 +74,6 @@ func (s Storage) PickRandom(userName string) (page *storage.Page, err error) {
 
 	file := files[n]
 
-	return s.decodePage(filepath.Join(path, file.Name()))
 }
 
 func (s Storage) Remove(p *storage.Page) error {

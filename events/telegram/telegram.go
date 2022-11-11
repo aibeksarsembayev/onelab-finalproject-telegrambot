@@ -104,12 +104,17 @@ func event(upd telegram.Update) events.Event {
 	return res
 }
 
+<<<<<<< HEAD
 func fetchText(upd telegram.Update) string {
 	if upd.Message == nil {
 		return ""
 	}
 
 	return upd.Message.Text
+=======
+func fetchType(upd telegram.Update) events.Type {
+
+>>>>>>> parent of 616630d... finished test bot but not working
 }
 
 func fetchType(upd telegram.Update) events.Type {

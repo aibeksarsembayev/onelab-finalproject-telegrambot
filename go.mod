@@ -1,5 +1,6 @@
 module github.com/aibeksarsembayev/onelab-finalproject-telegrambot
 
+<<<<<<< HEAD
 go 1.18
 
 require (
@@ -48,3 +49,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+=======
+go 1.19
+>>>>>>> parent of 616630d... finished test bot but not working

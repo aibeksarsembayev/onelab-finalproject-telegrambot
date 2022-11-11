@@ -85,6 +85,7 @@ func parseTime(timeStr string) time.Time {
 
 	timeFormatted := fmt.Sprintf("20%s-%s-%sT%s", yy, mm, dd, tt)
 	timeCreated, err := time.Parse("2006-Jan-02T15:04", timeFormatted)
+
 	if err != nil {
 		log.Fatal("time parse issue", err)
 	}
