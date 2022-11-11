@@ -12,11 +12,14 @@ import (
 )
 
 const (
-	RndCmd   = "/rnd"
-	HelpCmd  = "/help"
-	StartCmd = "/start"
-	CatArtCmd = "/category"
-	
+	RndCmd        = "/rnd"
+	HelpCmd       = "/help"
+	StartCmd      = "/start"
+	ByCategoryCmd = "/bycategory"
+	AllArticleCmd = "/allarticle"
+	ByAuthorCmd   = "/byauthor"
+	CategoryCmd   = "/category"
+	AuthorCmd     = "/author"
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string) error {
@@ -35,9 +38,34 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 		return p.sendHelp(chatID)
 	case StartCmd:
 		return p.sendHello(chatID)
+	case ByAuthorCmd:
+	case ByCategoryCmd:
+	case AllArticleCmd:
+	case AuthorCmd:
+	case CategoryCmd:
 	default:
 		return p.tg.SendMessage(chatID, msgUnknownCommand)
 	}
+}
+
+func (p *Processor) sendByAuthor(chatID int, author string, username string) error {
+	return nil
+}
+
+func (p *Processor) sendByCategory(chatID int, category string, username string) error {
+	return nil
+}
+
+func (p *Processor) sendAll(chatID int, username string) error {
+	return nil
+}
+
+func (p *Processor) sendAuthor(chatID int, username string) error {
+	return nil
+}
+
+func (p *Processor) sendCategory(chatID int, username string) error {
+	return nil
 }
 
 func (p *Processor) savePage(chatID int, pageURL string, username string) (err error) {
