@@ -44,15 +44,30 @@ func (s *ArticleRepository) Create(ctx context.Context, a []*storage.Article) er
 
 // GetByCategory ...
 func (s *ArticleRepository) GetByCategory(ctx context.Context, category string) ([]*storage.Article, error) {
-	return nil, nil
+	a := []*storage.Article{}
+	err := s.dbpool.Select(&a, `SELECT * FROM "article" WHERE created_at = $1 ORDER by created_at DESC`, category)
+	if err != nil {
+		return []*storage.Article{}, err
+	}
+	return a, nil
 }
 
 // GetByAuthor ...
 func (s *ArticleRepository) GetByAuthor(ctx context.Context, author string) ([]*storage.Article, error) {
-	return nil, nil
+	a := []*storage.Article{}
+	err := s.dbpool.Select(&a, `SELECT * FROM "article" WHERE author = $1 ORDER by created_at DESC`, author)
+	if err != nil {
+		return []*storage.Article{}, err
+	}
+	return a, nil
 }
 
 // GetAll ...
 func (s *ArticleRepository) GetAll(ctx context.Context) ([]*storage.Article, error) {
-	return nil, nil
+	a := []*storage.Article{}
+	err := s.dbpool.Select(&a, `SELECT * FROM "article" ORDER by created_at DESC`)
+	if err != nil {
+		return []*storage.Article{}, err
+	}
+	return a, nil
 }
