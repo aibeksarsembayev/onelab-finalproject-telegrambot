@@ -19,6 +19,8 @@ type Processor struct {
 type Meta struct {
 	ChatID   int
 	Username string
+	Category string
+	Author   string
 }
 
 var (
@@ -70,7 +72,7 @@ func (p *Processor) processMessage(event events.Event) error {
 		return e.Wrap("can't process message", err)
 	}
 
-	if err := p.doCmd(event.Text, meta.ChatID, meta.Username); err != nil {
+	if err := p.doCmd(event.Text, meta.ChatID, meta.Username, meta.Category, meta.Author); err != nil {
 		return e.Wrap("can't process message", err)
 	}
 

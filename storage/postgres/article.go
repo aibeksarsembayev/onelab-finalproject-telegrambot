@@ -33,7 +33,7 @@ func (s *AStorage) Create(ctx context.Context, a []*storage.Article) error {
 // GetByCategory ...
 func (s *AStorage) GetByCategory(ctx context.Context, category string) ([]*storage.Article, error) {
 	a := []*storage.Article{}
-	err := s.dbpool.Select(&a, `SELECT * FROM "article" WHERE created_at = $1 ORDER by created_at DESC`, category)
+	err := s.dbpool.Select(&a, `SELECT * FROM "article" WHERE category = $1 ORDER by created_at DESC`, category)
 	if err != nil {
 		return []*storage.Article{}, err
 	}
@@ -73,7 +73,7 @@ func (s *AStorage) GetCategory(ctx context.Context) ([]*storage.ArticleCategoryD
 // GetAuthor ...
 func (s *AStorage) GetAuthor(ctx context.Context) ([]*storage.ArticleAuthorDTO, error) {
 	a := []*storage.ArticleAuthorDTO{}
-	err := s.dbpool.Select(&c, `SELECT author FROM "article" GROUP BY author`)
+	err := s.dbpool.Select(&a, `SELECT author FROM "article" GROUP BY author`)
 	if err != nil {
 		return []*storage.ArticleAuthorDTO{}, err
 	}

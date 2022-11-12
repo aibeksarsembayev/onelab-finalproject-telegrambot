@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -13,6 +14,8 @@ type AStorage interface {
 	GetCategory(ctx context.Context) ([]*ArticleCategoryDTO, error)
 	GetAuthor(ctx context.Context) ([]*ArticleAuthorDTO, error)
 }
+
+var ErrNoArticles = errors.New("no articles")
 
 type Article struct {
 	ID        int       `db:"id"`

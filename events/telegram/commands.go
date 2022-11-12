@@ -22,7 +22,7 @@ const (
 	AuthorCmd     = "/author"
 )
 
-func (p *Processor) doCmd(text string, chatID int, username string) error {
+func (p *Processor) doCmd(text string, chatID int, username string, category string, author string) error {
 	text = strings.TrimSpace(text)
 
 	log.Printf("got new command '%s' from '%s", text, username)
@@ -39,32 +39,99 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 	case StartCmd:
 		return p.sendHello(chatID)
 	case ByAuthorCmd:
+		return p.sendByAuthor(chatID, author)
 	case ByCategoryCmd:
+		return p.sendByCategory(chatID, category)
 	case AllArticleCmd:
+		return p.sendAll(chatID)
 	case AuthorCmd:
+		return p.sendAuthor(chatID)
 	case CategoryCmd:
+		return p.sendCategory(chatID)
 	default:
 		return p.tg.SendMessage(chatID, msgUnknownCommand)
 	}
 }
 
-func (p *Processor) sendByAuthor(chatID int, author string, username string) error {
+func (p *Processor) sendByAuthor(chatID int, author string) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send articles by category", err) }()
+	author = "Александр Репников"
+	articles, err := p.storage2.GetByAuthor(context.Background(), author)
+	if err != nil {
+		return err
+	}
+
+	for _, a := range articles {
+		if err := p.tg.SendMessage(chatID, a.URL); err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+
+func (p *Processor) sendByCategory(chatID int, category string) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send articles by category", err) }()
+	category = "О нас"
+	articles, err := p.storage2.GetByCategory(context.Background(), category)
+	if err != nil {
+		return err
+	}
+
+	for _, a := range articles {
+		if err := p.tg.SendMessage(chatID, a.URL); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (p *Processor) sendByCategory(chatID int, category string, username string) error {
+func (p *Processor) sendAll(chatID int) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send all articles", err) }()
+
+	articles, err := p.storage2.GetAll(context.Background())
+	if err != nil && !errors.Is(err, storage.ErrNoArticles) {
+		return err
+	}
+
+	for _, a := range articles {
+		if err := p.tg.SendMessage(chatID, a.URL); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func (p *Processor) sendAll(chatID int, username string) error {
+func (p *Processor) sendAuthor(chatID int) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send categories", err) }()
+
+	authors, err := p.storage2.GetAuthor(context.Background())
+	if err != nil {
+		return err
+	}
+
+	for _, a := range authors {
+		if err := p.tg.SendMessage(chatID, a.Author); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (p *Processor) sendAuthor(chatID int, username string) error {
-	return nil
-}
+func (p *Processor) sendCategory(chatID int) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send categories", err) }()
 
-func (p *Processor) sendCategory(chatID int, username string) error {
+	categories, err := p.storage2.GetCategory(context.Background())
+	if err != nil {
+		return err
+	}
+
+	for _, c := range categories {
+		if err := p.tg.SendMessage(chatID, c.Category); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
