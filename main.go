@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -11,13 +10,11 @@ import (
 	event_consumer "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/consumer/event-consumer"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/postgres"
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/sqlite"
 )
 
 const (
-	tgBotHost         = "api.telegram.org"
-	sqliteStoragePath = "data/sqlite/storage.db"
-	batchSize         = 100
+	tgBotHost = "api.telegram.org"
+	batchSize = 100
 )
 
 func main() {
@@ -32,17 +29,6 @@ func main() {
 		fmt.Println(conf)
 	}
 
-	//s := files.New(storagePath)
-
-	// sqlite storage
-	s, err := sqlite.New(sqliteStoragePath)
-	if err != nil {
-		log.Fatal("can't connect to storage: ", err)
-	}
-	if err := s.Init(context.TODO()); err != nil {
-		log.Fatal("can't init storage: ", err)
-	}
-
 	// init postgres db
 	// create pool of connection for DB
 	dbpool, err := postgres.InitPostgresDBConn(&conf)
@@ -51,14 +37,13 @@ func main() {
 	}
 	defer dbpool.Close()
 
-	s2 := postgres.NewDBArticleRepo(dbpool)
+	s := postgres.NewDBArticleRepo(dbpool)
 
 	// s2.InsertArticle()
 
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),
 		s,
-		s2,
 	)
 
 	log.Print("service started")
