@@ -23,3 +23,13 @@ type From struct {
 type Chat struct {
 	ID int `json:"id"`
 }
+
+type InlineKeyboardMarkup struct {
+	InlineKeyboard [][]InlineKeyboardButton `json:"inline_keyboard"`
+}
+
+type InlineKeyboardButton struct {
+	Text         string `json:"text"`
+	URL          string `json:"url"`
+	CallbackData string `json:"callback_data"`
+}

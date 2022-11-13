@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"path"
@@ -9,10 +10,23 @@ import (
 	"time"
 
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/postgres"
 	"github.com/gocolly/colly"
 )
 
-func NewParser() []*storage.Article {
+func NewParser(s *postgres.AStorage, period time.Duration) {
+	t := time.NewTicker(period * time.Minute)
+	defer t.Stop()
+	for {
+		select {
+		case <-t.C: // initiate parsing
+			parsing(s)
+		}
+	}
+
+}
+
+func parsing(s *postgres.AStorage) {
 	ax := []*storage.Article{}
 
 	for i := 1; i < 8; i++ {
@@ -20,10 +34,11 @@ func NewParser() []*storage.Article {
 		ax = append(ax, tempax...)
 	}
 
-	for _, a := range ax {
-		fmt.Println(a)
+	err := s.Create(context.TODO(), ax)
+	if err != nil {
+		log.Fatal("parse: can't insert parsed data into db", err)
 	}
-	return ax
+	log.Print("periodical parsing was done successfully")
 }
 
 func parseByCat(catN int) []*storage.Article {

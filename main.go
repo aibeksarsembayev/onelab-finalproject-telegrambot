@@ -4,12 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"time"
 
 	tgClient "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/config"
 	event_consumer "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/consumer/event-consumer"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/postgres"
+	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/tools/parser"
 )
 
 const (
@@ -18,8 +20,6 @@ const (
 )
 
 func main() {
-	// call parser
-	// parser.NewParser()
 
 	// load configs
 	conf, err := config.LoadConfig()
@@ -39,7 +39,9 @@ func main() {
 
 	s := postgres.NewDBArticleRepo(dbpool)
 
-	// s2.InsertArticle()
+	// init parser
+	var parsePeriod time.Duration = 5 // parsing period in minute
+	go parser.NewParser(s, parsePeriod)
 
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),
