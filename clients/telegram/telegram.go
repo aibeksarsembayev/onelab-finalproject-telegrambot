@@ -1,7 +1,9 @@
 package telegram
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -63,6 +65,29 @@ func (c *Client) SendMessage(chatID int, text string) error {
 	_, err := c.doRequest(sendMessageMethod, q)
 	if err != nil {
 		return e.Wrap("can't send message", err)
+	}
+
+	return nil
+}
+
+func (c *Client) SendMessageButton(chatID int, text string) error {
+	var botMessage IncomingMessage
+	botMessage.Chat.ID = chatID
+
+	botMessage.Text = text
+	botMessage.ReplyMarkup.InlineKeyboard = [][]InlineKeyboardButton{{{Text: "button1"}}}
+
+	buf, err := json.Marshal(botMessage)
+	if err != nil {
+		return e.Wrap("can't send message", err)
+	}
+	fmt.Println(string(buf))
+	fmt.Println("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+
+	_, err = http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+
+	if err != nil {
+		return err
 	}
 
 	return nil

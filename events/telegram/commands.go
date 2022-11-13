@@ -125,6 +125,9 @@ func (p *Processor) sendCategory(chatID int) (err error) {
 			return err
 		}
 	}
+
+	p.tg.SendMessageButton(chatID, "buttons")
+
 	return nil
 }
 
