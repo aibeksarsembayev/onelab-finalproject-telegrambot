@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 6543,
+      "driver": "PostgreSQL",
+      "name": "tbot",
+      "database": "postgresdb",
+      "username": "postgres",
+      "password": "postgres"
+    }
+  ]
+}

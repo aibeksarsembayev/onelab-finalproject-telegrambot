@@ -41,7 +41,7 @@ func main() {
 	s := postgres.NewDBArticleRepo(dbpool)
 
 	// init parser
-	var parsePeriod time.Duration = 5 // parsing period in minute
+	var parsePeriod time.Duration = 1 // parsing period in minute
 	go parser.NewParser(s, parsePeriod)
 
 	// init API fetcher

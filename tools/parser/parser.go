@@ -45,9 +45,9 @@ func parseByCat(catN int) []*storage.Article {
 	c := colly.NewCollector(
 		colly.AllowedDomains("sber-invest.kz"),
 	)
-	c.OnRequest(func(r *colly.Request) {
-		log.Print("Visiting", r.URL)
-	})
+	// c.OnRequest(func(r *colly.Request) {
+	// 	log.Print("Visiting", r.URL)
+	// })
 
 	ax := []*storage.Article{}
 

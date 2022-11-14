@@ -75,8 +75,8 @@ func fetching(s *postgres.Storage) {
 
 	log.Print("API fetching was done successfully")
 
-	for _, v := range articles {
-		fmt.Println(*v)
-	}
+	// for _, v := range articles {
+	// 	fmt.Println(*v)
+	// }
 
 }

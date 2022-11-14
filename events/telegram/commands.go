@@ -14,11 +14,12 @@ import (
 const (
 	HelpCmd       = "/help"
 	StartCmd      = "/start"
-	ByCategoryCmd = "/bycategory"
-	AllArticleCmd = "/allarticle"
-	ByAuthorCmd   = "/byauthor"
+	ArticleCmd    = "/articles"
 	CategoryCmd   = "/category"
 	AuthorCmd     = "/author"
+	ByCategoryCmd = "/bycategory"
+	ByAuthorCmd   = "/byauthor"
+	AllArticleCmd = "/allarticle"
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string, category string, author string) error {

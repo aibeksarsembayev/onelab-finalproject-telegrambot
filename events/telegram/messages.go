@@ -1,8 +1,19 @@
 package telegram
 
-const msgHelp = `I can parse knowledgebase on https://sber-invest.kz and provide articles.
+const msgHelp = `@sber_invest_bot - service to get articles from knowledgebase on sber-invest.kz.
 
-In order to see articles, choose required filter.`
+Service is able to:
+- get all articles;
+- get articles by category;
+- get articles by author;
+- export articles in pdf, csv;
+
+*General*
+/help - shows this message
+
+*Articles*
+/articles - shows article filter
+`
 
 const msgHello = "Hi there! 👾\n\n" + msgHelp
 
