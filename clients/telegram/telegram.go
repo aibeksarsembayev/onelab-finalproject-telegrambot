@@ -73,22 +73,32 @@ func (c *Client) SendMessage(chatID int, text string) error {
 func (c *Client) SendMessageButton(chatID int, text string) error {
 	var botMessage IncomingMessage
 	botMessage.Chat.ID = chatID
+	botMessage.Chat_id = chatID
 
 	botMessage.Text = text
-	botMessage.ReplyMarkup.InlineKeyboard = [][]InlineKeyboardButton{{{Text: "button1"}}}
+	botMessage.ReplyMarkup.InlineKeyboard = [][]InlineKeyboardButton{{{Text: "button1", CallbackData: "0"}}}
 
 	buf, err := json.Marshal(botMessage)
 	if err != nil {
 		return e.Wrap("can't send message", err)
 	}
 	fmt.Println(string(buf))
-	fmt.Println("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+	// fmt.Println(http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf)))
 
-	_, err = http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
+	res, err := http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
 
 	if err != nil {
 		return err
 	}
+	buffer := make([]byte, 1000)
+	res.Body.Read(buffer)
+	for name, values := range res.Header {
+		// Loop over all values for the name.
+		for _, value := range values {
+			fmt.Println(name, value)
+		}
+	}
+	fmt.Println(string(buffer))
 
 	return nil
 }
