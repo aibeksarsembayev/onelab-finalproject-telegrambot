@@ -11,6 +11,7 @@ import (
 	event_consumer "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/consumer/event-consumer"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage/postgres"
+	apifetcher "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/tools/api-fetcher"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/tools/parser"
 )
 
@@ -42,6 +43,9 @@ func main() {
 	// init parser
 	var parsePeriod time.Duration = 5 // parsing period in minute
 	go parser.NewParser(s, parsePeriod)
+
+	// init API fetcher
+	go apifetcher.NewFetcher(s, parsePeriod)
 
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),

@@ -14,7 +14,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func NewParser(s *postgres.AStorage, period time.Duration) {
+func NewParser(s *postgres.Storage, period time.Duration) {
 	t := time.NewTicker(period * time.Minute)
 	defer t.Stop()
 	for {
@@ -26,7 +26,7 @@ func NewParser(s *postgres.AStorage, period time.Duration) {
 
 }
 
-func parsing(s *postgres.AStorage) {
+func parsing(s *postgres.Storage) {
 	ax := []*storage.Article{}
 
 	for i := 1; i < 8; i++ {
@@ -46,7 +46,7 @@ func parseByCat(catN int) []*storage.Article {
 		colly.AllowedDomains("sber-invest.kz"),
 	)
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
+		log.Print("Visiting", r.URL)
 	})
 
 	ax := []*storage.Article{}

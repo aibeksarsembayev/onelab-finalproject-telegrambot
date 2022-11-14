@@ -12,7 +12,7 @@ import (
 type Processor struct {
 	tg      *telegram.Client
 	offset  int
-	storage storage.AStorage
+	storage storage.Storage
 }
 
 type Meta struct {
@@ -27,7 +27,7 @@ var (
 	ErrUnknownMetaType  = errors.New("unknown meta type")
 )
 
-func New(client *telegram.Client, storage storage.AStorage) *Processor {
+func New(client *telegram.Client, storage storage.Storage) *Processor {
 	return &Processor{
 		tg:      client,
 		storage: storage,
