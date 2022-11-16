@@ -16,10 +16,16 @@ type Processor struct {
 }
 
 type Meta struct {
-	ChatID   int
-	Username string
-	Category string
-	Author   string
+	ChatID        int
+	Username      string
+	Category      string
+	Author        string
+	CallbackQuery string
+}
+
+type CallbackQuery struct {
+	ID   string
+	Data string
 }
 
 var (
@@ -58,6 +64,8 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 func (p *Processor) Process(event events.Event) error {
 	switch event.Type {
 	case events.Message:
+		return p.processMessage(event)
+	case events.CallbackQuery:
 		return p.processMessage(event)
 	default:
 		return e.Wrap("can't process message", ErrUnknownEventType)
@@ -101,6 +109,13 @@ func event(upd telegram.Update) events.Event {
 		}
 	}
 
+	if updType == events.CallbackQuery {
+		res.Meta = Meta{
+			ChatID:        upd.CallbackQuery.Message.Chat.ID,
+			CallbackQuery: upd.CallbackQuery.Data,
+		}
+	}
+
 	return res
 }
 
@@ -113,8 +128,12 @@ func fetchText(upd telegram.Update) string {
 }
 
 func fetchType(upd telegram.Update) events.Type {
-	if upd.Message == nil {
-		return events.Unknown
+	if upd.Message != nil {
+		return events.Message
+	}
+
+	if upd.CallbackQuery != nil {
+		return events.CallbackQuery
 	}
 
 	return events.Message
