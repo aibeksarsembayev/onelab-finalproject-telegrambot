@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	tgclient "github.com/aibeksarsembayev/onelab-finalproject-telegrambot/clients/telegram"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
 	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/storage"
 )
@@ -42,9 +43,39 @@ func (p *Processor) doCmd(text string, chatID int, username string, category str
 		return p.sendAuthor(chatID)
 	case CategoryCmd:
 		return p.sendCategory(chatID)
+	case ArticleCmd:
+		return p.articlesFilter(chatID)
 	default:
 		return p.tg.SendMessage(chatID, msgUnknownCommand)
 	}
+}
+
+func (p *Processor) articlesFilter(chatID int) (err error) {
+	defer func() { err = e.WrapIfErr("can't do command: can't send articles by category", err) }()
+
+	mainMenu := []string{
+		"by category",
+		"by author",
+		"all articles",
+	}
+
+	msg := &tgclient.IncomingMessage{
+		Chat_id: chatID,
+		Text:    "Choose option to filter articles",
+	}
+
+	msg.Chat.ID = chatID
+
+	msg.ReplyMarkup.InlineKeyboard = [][]tgclient.InlineKeyboardButton{{
+		{Text: mainMenu[0], CallbackData: mainMenu[0]},
+		{Text: mainMenu[1], CallbackData: mainMenu[1]},
+		{Text: mainMenu[2], CallbackData: mainMenu[2]}}}
+
+	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *Processor) sendByAuthor(chatID int, author string) (err error) {
@@ -61,7 +92,6 @@ func (p *Processor) sendByAuthor(chatID int, author string) (err error) {
 		}
 	}
 	return nil
-
 }
 
 func (p *Processor) sendByCategory(chatID int, category string) (err error) {
