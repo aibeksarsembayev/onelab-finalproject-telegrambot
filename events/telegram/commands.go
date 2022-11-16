@@ -19,8 +19,8 @@ const (
 	CategoryCmd   = "bycategory"
 	AuthorCmd     = "byauthor"
 	AllArticleCmd = "allarticles"
-	ByCategoryCmd = "/bycategory"
-	ByAuthorCmd   = "/byauthor"
+	ByCategoryCmd = "category-"
+	ByAuthorCmd   = "author-"
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string, callback_query string) error {
@@ -35,23 +35,23 @@ func (p *Processor) doCmd(text string, chatID int, username string, callback_que
 		input = callback_query
 	}
 
-	switch input {
-	case HelpCmd:
+	switch {
+	case input == HelpCmd:
 		return p.sendHelp(chatID)
-	case StartCmd:
+	case input == StartCmd:
 		return p.sendHello(chatID)
-	case ArticleCmd:
+	case input == ArticleCmd:
 		return p.articlesFilter(chatID)
-	case ByAuthorCmd:
-		return p.sendByAuthor(chatID, callback_query)
-	case ByCategoryCmd:
-		return p.sendByCategory(chatID, callback_query)
-	case AllArticleCmd:
-		return p.sendAll(chatID)
-	case AuthorCmd:
+	case input == AuthorCmd:
 		return p.sendAuthor(chatID)
-	case CategoryCmd:
+	case input == CategoryCmd:
 		return p.sendCategory(chatID)
+	case input == AllArticleCmd:
+		return p.sendAll(chatID)
+	case strings.HasPrefix(ByCategoryCmd, "category-"):
+		return p.sendByCategory(chatID, strings.TrimPrefix(callback_query, "category-"))
+	case strings.HasPrefix(ByAuthorCmd, "author-"):
+		return p.sendByAuthor(chatID, strings.TrimPrefix(callback_query, "author-"))
 	default:
 		return p.tg.SendMessage(chatID, msgUnknownCommand)
 	}
@@ -88,7 +88,7 @@ func (p *Processor) articlesFilter(chatID int) (err error) {
 
 func (p *Processor) sendByAuthor(chatID int, author string) (err error) {
 	defer func() { err = e.WrapIfErr("can't do command: can't send articles by category", err) }()
-	author = "Александр Репников"
+
 	articles, err := p.storage.GetByAuthor(context.Background(), author)
 	if err != nil {
 		return err
@@ -104,7 +104,7 @@ func (p *Processor) sendByAuthor(chatID int, author string) (err error) {
 
 func (p *Processor) sendByCategory(chatID int, category string) (err error) {
 	defer func() { err = e.WrapIfErr("can't do command: can't send articles by category", err) }()
-	category = "О нас"
+
 	articles, err := p.storage.GetByCategory(context.Background(), category)
 	if err != nil {
 		return err
@@ -156,7 +156,7 @@ func (p *Processor) sendAuthor(chatID int) (err error) {
 	}
 
 	for i, c := range authors {
-		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Author, CallbackData: c.Author}
+		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Author, CallbackData: "author-" + c.Author}
 	}
 
 	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
@@ -186,7 +186,7 @@ func (p *Processor) sendCategory(chatID int) (err error) {
 	}
 
 	for i, c := range categories {
-		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Category, CallbackData: c.Category}
+		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Category, CallbackData: "category-" + c.Category}
 	}
 
 	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
