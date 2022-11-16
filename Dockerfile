@@ -14,4 +14,4 @@ WORKDIR /
 
 COPY --from=build /app .
 
-CMD ["./tbotproject"]
+CMD ["./tbotproject", "-tg-bot-token", ""]
