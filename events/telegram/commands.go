@@ -150,12 +150,14 @@ func (p *Processor) sendAuthor(chatID int) (err error) {
 
 	msg.Chat.ID = chatID
 
-	preslice := make([]tgclient.InlineKeyboardButton, len(authors))
-
-	for i, author := range authors {
-		preslice[i] = tgclient.InlineKeyboardButton{Text: author.Author, CallbackData: author.Author}
+	for i := 0; i < len(authors); i++ {
+		preslice := make([]tgclient.InlineKeyboardButton, 1)
+		msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
 	}
-	msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
+
+	for i, c := range authors {
+		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Author, CallbackData: c.Author}
+	}
 
 	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
 		return err
@@ -178,12 +180,14 @@ func (p *Processor) sendCategory(chatID int) (err error) {
 
 	msg.Chat.ID = chatID
 
-	preslice := make([]tgclient.InlineKeyboardButton, len(categories))
+	for i := 0; i < len(categories); i++ {
+		preslice := make([]tgclient.InlineKeyboardButton, 1)
+		msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
+	}
 
 	for i, c := range categories {
-		preslice[i] = tgclient.InlineKeyboardButton{Text: c.Category, CallbackData: c.Category}
+		msg.ReplyMarkup.InlineKeyboard[i][0] = tgclient.InlineKeyboardButton{Text: c.Category, CallbackData: c.Category}
 	}
-	msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
 
 	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
 		return err
