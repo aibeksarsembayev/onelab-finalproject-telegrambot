@@ -16,38 +16,46 @@ const (
 	HelpCmd       = "/help"
 	StartCmd      = "/start"
 	ArticleCmd    = "/articles"
-	CategoryCmd   = "/category"
-	AuthorCmd     = "/author"
+	CategoryCmd   = "bycategory"
+	AuthorCmd     = "byauthor"
+	AllArticleCmd = "allarticles"
 	ByCategoryCmd = "/bycategory"
 	ByAuthorCmd   = "/byauthor"
-	AllArticleCmd = "/allarticle"
 )
 
-func (p *Processor) doCmd(text string, chatID int, username string, category string, author string) error {
-	text = strings.TrimSpace(text)
+func (p *Processor) doCmd(text string, chatID int, username string, callback_query string) error {
+	input := ""
+	if text != "" {
+		text = strings.TrimSpace(text)
+		log.Printf("got new command '%s' from '%s", text, username)
+		input = text
+	} else if callback_query != "" {
+		callback_query = strings.TrimSpace(callback_query)
+		log.Printf("got new callbackquery '%s' from '%s", callback_query, username)
+		input = callback_query
+	}
 
-	log.Printf("got new command '%s' from '%s", text, username)
-
-	switch text {
+	switch input {
 	case HelpCmd:
 		return p.sendHelp(chatID)
 	case StartCmd:
 		return p.sendHello(chatID)
+	case ArticleCmd:
+		return p.articlesFilter(chatID)
 	case ByAuthorCmd:
-		return p.sendByAuthor(chatID, author)
+		return p.sendByAuthor(chatID, callback_query)
 	case ByCategoryCmd:
-		return p.sendByCategory(chatID, category)
+		return p.sendByCategory(chatID, callback_query)
 	case AllArticleCmd:
 		return p.sendAll(chatID)
 	case AuthorCmd:
 		return p.sendAuthor(chatID)
 	case CategoryCmd:
 		return p.sendCategory(chatID)
-	case ArticleCmd:
-		return p.articlesFilter(chatID)
 	default:
 		return p.tg.SendMessage(chatID, msgUnknownCommand)
 	}
+
 }
 
 func (p *Processor) articlesFilter(chatID int) (err error) {
@@ -67,9 +75,9 @@ func (p *Processor) articlesFilter(chatID int) (err error) {
 	msg.Chat.ID = chatID
 
 	msg.ReplyMarkup.InlineKeyboard = [][]tgclient.InlineKeyboardButton{{
-		{Text: mainMenu[0], CallbackData: mainMenu[0]},
-		{Text: mainMenu[1], CallbackData: mainMenu[1]},
-		{Text: mainMenu[2], CallbackData: mainMenu[2]}}}
+		{Text: mainMenu[0], CallbackData: CategoryCmd},
+		{Text: mainMenu[1], CallbackData: AuthorCmd},
+		{Text: mainMenu[2], CallbackData: AllArticleCmd}}}
 
 	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
 		return err
@@ -135,10 +143,22 @@ func (p *Processor) sendAuthor(chatID int) (err error) {
 		return err
 	}
 
-	for _, a := range authors {
-		if err := p.tg.SendMessage(chatID, a.Author); err != nil {
-			return err
-		}
+	msg := &tgclient.IncomingMessage{
+		Chat_id: chatID,
+		Text:    "Choose author",
+	}
+
+	msg.Chat.ID = chatID
+
+	preslice := make([]tgclient.InlineKeyboardButton, len(authors))
+
+	for i, author := range authors {
+		preslice[i] = tgclient.InlineKeyboardButton{Text: author.Author, CallbackData: author.Author}
+	}
+	msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
+
+	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
+		return err
 	}
 	return nil
 }
@@ -151,13 +171,23 @@ func (p *Processor) sendCategory(chatID int) (err error) {
 		return err
 	}
 
-	for _, c := range categories {
-		if err := p.tg.SendMessage(chatID, c.Category); err != nil {
-			return err
-		}
+	msg := &tgclient.IncomingMessage{
+		Chat_id: chatID,
+		Text:    "Choose category",
 	}
 
-	p.tg.SendMessageButton(chatID, "buttons")
+	msg.Chat.ID = chatID
+
+	preslice := make([]tgclient.InlineKeyboardButton, len(categories))
+
+	for i, c := range categories {
+		preslice[i] = tgclient.InlineKeyboardButton{Text: c.Category, CallbackData: c.Category}
+	}
+	msg.ReplyMarkup.InlineKeyboard = append(msg.ReplyMarkup.InlineKeyboard, preslice)
+
+	if err := p.tg.SendMessagePost(chatID, msg); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -78,7 +78,7 @@ func (p *Processor) processMessage(event events.Event) error {
 		return e.Wrap("can't process message", err)
 	}
 
-	if err := p.doCmd(event.Text, meta.ChatID, meta.Username, meta.Category, meta.Author); err != nil {
+	if err := p.doCmd(event.Text, meta.ChatID, meta.Username, meta.CallbackQuery); err != nil {
 		return e.Wrap("can't process message", err)
 	}
 
@@ -112,6 +112,7 @@ func event(upd telegram.Update) events.Event {
 	if updType == events.CallbackQuery {
 		res.Meta = Meta{
 			ChatID:        upd.CallbackQuery.Message.Chat.ID,
+			Username:      upd.CallbackQuery.From.Username,
 			CallbackQuery: upd.CallbackQuery.Data,
 		}
 	}

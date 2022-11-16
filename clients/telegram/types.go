@@ -20,8 +20,8 @@ type IncomingMessage struct {
 }
 
 type CallbackQuery struct {
-	ID string `json:"id"`
-	// From         From            `json:"from"`
+	ID      string          `json:"id"`
+	From    From            `json:"from"`
 	Message IncomingMessage `json:"message"`
 	// ChatInstance string          `json:"chat_instance"`
 	Data string `json:"data"`
