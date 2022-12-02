@@ -3,14 +3,13 @@ package telegram
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"path"
 	"strconv"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/lib/e"
+	"github.com/zecodein/sber-invest-bot/lib/e"
 )
 
 type Client struct {
@@ -47,7 +46,7 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 	if err != nil {
 		return nil, err
 	}
-
+	// fmt.Println(string(data))
 	var res UpdatesResponse
 
 	if err := json.Unmarshal(data, &res); err != nil {
@@ -62,6 +61,8 @@ func (c *Client) SendMessage(chatID int, text string) error {
 	q := url.Values{}
 	q.Add("chat_id", strconv.Itoa(chatID))
 	q.Add("text", text)
+	q.Add("parse_mode", "HTML") // Parse mode version to format message
+	q.Add("disable_web_page_preview", "true")
 
 	_, err := c.doRequest(sendMessageMethod, q)
 	if err != nil {
@@ -98,49 +99,11 @@ func (c *Client) doRequest(method string, query url.Values) (data []byte, err er
 	if err != nil {
 		return nil, err
 	}
-
 	return body, nil
 }
 
-// SendMessageButton with included Post method request
-func (c *Client) SendMessageButton(chatID int, text string) error {
-	var botMessage IncomingMessage
-	botMessage.Chat.ID = chatID
-	botMessage.Chat_id = chatID
-
-	botMessage.Text = text
-	botMessage.ReplyMarkup.InlineKeyboard = [][]InlineKeyboardButton{{{Text: "button1", CallbackData: "0"}}}
-
-	buf, err := json.Marshal(botMessage)
-	if err != nil {
-		return e.Wrap("can't send message", err)
-	}
-	// fmt.Println(string(buf))
-	// fmt.Println(http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf)))
-
-	res, err := http.Post("https://"+c.host+"/"+c.basePath+"/sendMessage", "application/json", bytes.NewBuffer(buf))
-
-	if err != nil {
-		return err
-	}
-
-	buffer := make([]byte, 1000)
-	res.Body.Read(buffer)
-
-	for name, values := range res.Header {
-		// Loop over all values for the name.
-		for _, value := range values {
-			fmt.Println(name, value)
-		}
-	}
-
-	fmt.Println(string(buffer))
-
-	return nil
-}
-
 // SendMessage by IncomingMessage struct and for methodpost
-func (c *Client) SendMessagePost(chatID int, msg *IncomingMessage) error {
+func (c *Client) SendMessagePost(msg *SendMessage) error {
 	reqBody, err := json.Marshal(msg)
 	if err != nil {
 		return err

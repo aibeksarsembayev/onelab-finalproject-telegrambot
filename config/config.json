@@ -1,17 +1,30 @@
 {
   "debug": true,
   "server": {
-    "address": ":8080"
+    "address": ":8081"
   },
   "context":{
     "timeout":2
   },
   "database": {
-    "host": "postgresdb",
+    "host": "postgres",    
     "port": ":5432",
     "user": "postgres",
     "pass": "postgres",
-    "name": "postgresdb"
+    "name": "postgres"
+  },
+  "db_test": {
+    "host": "localhost",    
+    "port": ":2345",
+    "user": "postgres",
+    "pass": "postgres",
+    "name": "postgres"
+  },
+  "tgbot": {
+    "host": "api.telegram.org",
+    "batch_size":100,
+    "token": "YOUR_TOKEN",
+    "api_parse_period": 60,
+    "digest_chat_id": 0
   }
-
 }

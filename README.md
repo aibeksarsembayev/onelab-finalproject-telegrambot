@@ -1,4 +1,5 @@
-# Telegram Bot - OneLab - Final Project
+# Sber-Invest Telegram Bot
 
-## Telegram Bot parses web-site(https://sber-invest.kz/knowledgebase) and shows all articles from resourses. 
-## Articles can be requested by Author, Category or All. 
+## Fetchs web-site sber-invest API (https://sber-invest.kz/knowledgebase);
+## Articles can be requested by Author, Category or All;
+## Sends weekly article digest to Sber-invest channel;

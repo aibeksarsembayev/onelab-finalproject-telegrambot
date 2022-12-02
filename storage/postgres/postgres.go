@@ -3,9 +3,9 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/config"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/jmoiron/sqlx"
+	"github.com/zecodein/sber-invest-bot/config"
 )
 
 func InitPostgresDBConn(config *config.Config) (*sqlx.DB, error) {
@@ -20,7 +20,7 @@ func InitPostgresDBConn(config *config.Config) (*sqlx.DB, error) {
 
 	url := fmt.Sprintf("postgres://%s:%s@%s%s/%s", config.Database.DBUser, config.Database.DBPass, config.Database.DBHost, config.Database.DBPort, config.Database.DBName)
 	// dsn := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", config.Database.DBUser, config.Database.DBPass, config.Database.DBHost, config.Database.DBPort, config.Database.DBName)
-	fmt.Println(url)
+
 	db, err := sqlx.Connect("pgx", url)
 	if err != nil {
 		return nil, fmt.Errorf("postgres: %w", err)

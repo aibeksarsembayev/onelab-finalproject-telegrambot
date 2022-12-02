@@ -4,29 +4,46 @@ import (
 	"log"
 	"time"
 
-	"github.com/aibeksarsembayev/onelab-finalproject-telegrambot/events"
+	"github.com/zecodein/sber-invest-bot/config"
+	"github.com/zecodein/sber-invest-bot/events"
+	apifetcher "github.com/zecodein/sber-invest-bot/tools/api-fetcher"
+	digest "github.com/zecodein/sber-invest-bot/tools/digest"
+	"go.uber.org/zap"
 )
 
 type Consumer struct {
-	fetcher   events.Fetcher
-	processor events.Processor
-	batchSize int
+	conf         config.Config
+	lg           *zap.Logger
+	fetcher      events.Fetcher
+	processor    events.Processor
+	apifetcher   apifetcher.APIFetcher
+	digestsender digest.DigestSender
+	batchSize    int
 }
 
-func New(fetcher events.Fetcher, processor events.Processor, batchSize int) Consumer {
+func New(conf config.Config, lg *zap.Logger, fetcher events.Fetcher, processor events.Processor, apif apifetcher.APIFetcher, ds digest.DigestSender, batchSize int) Consumer {
 	return Consumer{
-		fetcher:   fetcher,
-		processor: processor,
-		batchSize: batchSize,
+		conf:         conf,
+		lg:           lg,
+		fetcher:      fetcher,
+		processor:    processor,
+		apifetcher:   apif,
+		digestsender: ds,
+		batchSize:    batchSize,
 	}
 }
 
 func (c Consumer) Start() error {
+	// init api fetcher
+	go c.apifetcher.Fetch()
+
+	// init periodical article digest sender
+	go c.digestsender.Send()
+
 	for {
 		gotEvents, err := c.fetcher.Fetch(c.batchSize)
 		if err != nil {
 			log.Printf("[ERR] consumer: %s", err.Error())
-
 			continue
 		}
 
@@ -37,8 +54,7 @@ func (c Consumer) Start() error {
 		}
 
 		if err := c.handleEvents(gotEvents); err != nil {
-			log.Print(err)
-
+			c.lg.Sugar().Error(err)
 			continue
 		}
 	}
@@ -46,14 +62,13 @@ func (c Consumer) Start() error {
 
 func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
-		log.Printf("got new event: %s", event.Text)
-
+		// log.Printf("got new event: %s", event.Text)
+		c.lg.Sugar().Infof("got new event: %s", event.Text)
 		if err := c.processor.Process(event); err != nil {
-			log.Printf("can't handle event: %s", err.Error())
-
+			// log.Printf("can't handle event: %s", err.Error())
+			c.lg.Sugar().Errorf("can't handle event: %s", err.Error())
 			continue
 		}
 	}
-
 	return nil
 }

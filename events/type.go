@@ -14,6 +14,9 @@ const (
 	Unknown Type = iota
 	Message
 	CallbackQuery
+	MyChatMember
+	ChannelPost
+	EditedMessage
 )
 
 type Event struct {
